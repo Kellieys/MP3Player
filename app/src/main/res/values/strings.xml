@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">MP3Player</string>
+    <string name="search_mp3">Search MP3</string>
+    <string name="dropicon">dropIcon</string>
+    <string name="diskimage">diskImage</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="song_name">This is song name</string>
+    <string name="leftarrow">left</string>
+    <string name="select">GO</string>
+</resources>
