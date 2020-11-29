@@ -44,24 +44,20 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         handler = new Handler();
-        setContentView(R.layout.activity_main);
 
         //when enter the app, check if user had allowed permission
-        permission();
-
-        dropdown = findViewById(R.id.dropdown);
-        //Retrieve files
-        path = Environment.getExternalStorageDirectory().getPath()+ "/Music/";
-        String[] files =  new File(path).list();
-
-        //Initialize dropdown
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, R.layout.support_simple_spinner_dropdown_item, files);
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        dropdown.setAdapter(adapter);
+        //if no permission, run permission(), else start the app startApp()
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED)
+        {
+            permission();
+        }
+        else {
+            startApp();
+        }
     }
 
     //If no permission, request permission from user
-    //else fetch all music from external storage
     private void permission()
     {
         if (ContextCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -77,26 +73,47 @@ public class MainActivity extends AppCompatActivity {
 
     } //end of permission()
 
-//        @Override
-//        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-//        {
-//            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//            if (requestCode == REQUEST_CODE)
-//            {
-//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-//                {
-//                    //Permission Granted
-//                    Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
-//                }
-//                else
-//                {
-//                    //re-request permission
-//                    ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}
-//                            , REQUEST_CODE);
-//                }
-//            }
-//
-//        } //end of onRequestPermissionResult()
+        @Override
+        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+        {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            if (requestCode == REQUEST_CODE)
+            {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    //Permission Granted
+                    startApp();
+                    Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    // Permission Denied
+                    Toast.makeText(MainActivity.this, "Please allow permission for app to work.", Toast.LENGTH_SHORT)
+                            .show();
+                    //re-request permission
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}
+                            , REQUEST_CODE);
+                }
+            }
+
+        } //end of onRequestPermissionResult()
+
+    public void startApp()
+    {
+
+        setContentView(R.layout.activity_main);
+
+        dropdown = findViewById(R.id.dropdown);
+        //Retrieve files
+        path = Environment.getExternalStorageDirectory().getPath()+ "/Music/";
+        String[] files =  new File(path).list();
+
+        //Initialize dropdown
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, R.layout.support_simple_spinner_dropdown_item, files);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        dropdown.setAdapter(adapter);
+
+    }
 
 
     public void select_onclick(View view)
